@@ -1,60 +1,99 @@
 pipeline {
       agent any
       stages {
-          stage('One') {
+	  
+          stage('ST1 5145881P') {
           steps {
-            echo 'Continue from previous phase: Ready to deploy next environment.'
+            echo 'ST1 5145881P: Environment is prepared. Start to rollout to TEST server'
           }
           }
-          stage('Two') {
+          stage('ST2 5145881P') {
           steps {
-            input('Do you want to update to UAT container?')
-          }
-          }
-          stage('Three') {
-          when {
-                not {
-                    branch "UAT container NOT updated"
-                }
-          }
-          steps {
+		  script {
+		         sh "rm -f BKUP-TEST-image"
+				 sh "tar -czvf BKUP-TEST-image /tmp/backup
                  sh '''#!/bin/bash
-                 puppet resource file /tmp/clone ensure=absent force=true;
-                 puppet resource file /tmp/clone ensure=directory;
-	   cd /tmp/clone;
-	   git clone https://<your token>@github.com/<your repo>/devops_repo.git;
+                 puppet resource file /tmp/5145881P/work ensure=absent force=true;
+                 puppet resource file /tmp/5145881P/work ensure=directory;
+				 cd /tmp/5145881P/work;
+				 git clone https://github.com/22052679Asraf/POC_REPO.git
                  targets=puppetclient1;
-                 locate_script='/tmp/clone/devops_repo/script_to_run';
+                 locate_script='/tmp/5145881P/work/5145881P_script';
                  bolt script run $locate_script -t $targets -u clientadm -p user123 --no-host-key-check --run-as root;
                  '''
-                 echo "UAT container updated"
+                 echo "ST2 5145881P: TEST server is backup and updated"
           }
           }
-          stage('Four') {
+		  
+		  }
+		  
+		   stage('ST3 5145881P') {
           steps {
-            input('Do you want to deploy to Production container?')
+		  curl –is http://TESTsvr5145881P.localdomain|head –n 1 > /tmp/TEST-result-file;
+            echo "ST3 5145881P: Test result for TEST server is generated : TEST-result-file ”
                 
           }
           }
-          stage('Five') {
-          when {
-                not {
-                    branch "Production container NOT updated"
-                }
-          }
+          stage('ST4 5145881P') {
           steps {
-                 sh '''#!/bin/bash
+		    echo "ST4 5145881P>: TEST server’s testing result has been inspected”
+			script {
+                    def userInput = input(
+                        id: 'userInput',
+                        message: 'Choice : Proceed Production or RollBack Test?',
+                        parameters: [
+                            choice(choices: 'Proceed Production\nRollBack Test', description: 'Select an option:', name: 'ACTION')
+                        ]
+                    )  
+					env.USER_CHOICE = userInput.action					
+          }
+          }
+		  
+		  }
+          stage('ST5 5145881P') {
+           steps {
+		   script {
+            if (env.USER_CHOICE == 'Proceed Production') {
+			echo "ST5 5145881P: Proceed to Production Phase;
+			 sh '''#!/bin/bash
+                 puppet resource file /tmp/5145881P/work ensure=absent force=true;
+                 puppet resource file /tmp/5145881P/work ensure=directory;
+				 cd /tmp/5145881P/work;
+				 git clone https://github.com/22052679Asraf/POC_REPO.git
                  targets=puppetclient2;
-                 locate_script='/tmp/clone/devops_repo/script_to_run';
+                 locate_script='/tmp/5145881P/work/5145881P_script';
                  bolt script run $locate_script -t $targets -u clientadm -p user123 --no-host-key-check --run-as root;
                  '''
-                 echo "Production container updated"
-          }
-          }
-          stage('Completed updating Operation') {
-          steps {
-            echo 'Completed updating to Production Container'
-          }
-          }
+				 
+            } else if (env.USER_CHOICE == 'RollBack Test') {
+			echo “ST5 5145881P: Rollback Test server”
+			
+			
+            }
+        }
+    
+	
+	}
+	
+	}
+          stage('ST6 5145881P') {
+           steps {
+		   script {
+            if (env.USER_CHOICE == 'Proceed Production') {
+			echo “ST6 5145881P: Production server is updated”
+				 
+            } else if (env.USER_CHOICE == 'RollBack Test') {
+			
+			echo “ST6 5145881P: “TEST server is rollback”.
+			
+			
+            }
+        }
+    
+	
+	}
       }
-}
+	  
+	  }
+	  
+	  }
