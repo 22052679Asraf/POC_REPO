@@ -22,11 +22,10 @@ pipeline {
           }
           }
 		  
-		  }
+
 		  
 		   stage('ST3 5145881P') {
           steps {
-		  curl –is http://TESTsvr5145881P.localdomain|head –n 1 > /tmp/TEST-result-file;
             echo "ST3 5145881P: Test result for TEST server is generated : TEST-result-file ”
                 
           }
