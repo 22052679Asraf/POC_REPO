@@ -29,7 +29,6 @@ pipeline {
         }
         stage('ST4 5145881P') {
             steps {
-                echo 'ST4 5145881P: TEST server’s testing result has been inspected'
                 script {
                     def userInput = input(
                         id: 'userInput',
