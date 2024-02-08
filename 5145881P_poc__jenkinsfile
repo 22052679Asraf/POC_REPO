@@ -49,21 +49,17 @@ pipeline {
                         locate_script='/tmp/clone/POC_REPO/5145881P_script'
                         bolt script run $locate_script -t $targets -u clientadm -p user123 --no-host-key-check --run-as root
                         '''
-                    } else if (env.USER_CHOICE == 'RollBack Test') {
-                        echo 'ST5 5145881P: Rollback Test server'
                     }
                 }
         
         stage('ST6 5145881P') {
             steps {
-                script {
-                    if (env.USER_CHOICE == 'Proceed Production') {
+                
                         echo 'ST6 5145881P: Production server is updated'
-                    } else if (env.USER_CHOICE == 'RollBack Test') {
-                        echo 'ST6 5145881P: TEST server is rollback'
+                    
+                
                     }
                 }
             }
         }
-    }
-}
+    
