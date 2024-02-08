@@ -48,7 +48,7 @@ stage('ST3 5145881P') {
            steps {
 		   script {
             if (env.USER_CHOICE == 'Proceed Production') {
-			echo 'ST5 5145881P: Proceed to Production Phase';
+			echo 'ST5 5145881P: Proceed to Production Phase'
 			 sh '''#!/bin/bash
                  puppet resource file /tmp/clone ensure=absent force=true;
                  puppet resource file /tmp/clone ensure=directory;
@@ -78,7 +78,7 @@ stage('ST3 5145881P') {
 				 
             } else if (env.USER_CHOICE == 'RollBack Test') {
 			
-			echo 'ST6 5145881P: “TEST server is rollback'.
+			echo 'ST6 5145881P: TEST server is rollback'.
 			
 			
             }
